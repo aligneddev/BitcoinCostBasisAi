@@ -1,0 +1,62 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+  "description": "Bitcoin Historical Data Mcp",
+  "name": "HistoricalBitcoinDataMcp",
+  "version": "0.1.1-beta",
+  "inputs": [
+    {
+      "name": "read_historical_data",
+      "description": "Read historical Bitcoin data from the built-in CSV. Optionally provide a custom CSV path.",
+      "required": false,
+      "schema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Optional CSV path inside the container; defaults to './data/BitcoinHistoricalData.csv'"
+          }
+        }
+      }
+    },
+    {
+      "name": "read_historical_data_for_date_range",
+      "description": "Read historical Bitcoin data from the built-in CSV for a specific date range. Optionally provide a custom CSV path.",
+      "required": false,
+      "schema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Optional CSV path inside the container; defaults to './data/BitcoinHistoricalData.csv'"
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date",
+            "description": "The start date for the date range filter."
+          },
+          "end_date": {
+            "type": "string",
+            "format": "date",
+            "description": "The end date for the date range filter."
+          }
+        }
+      }
+    }
+  ],
+  "packages": [
+    {
+      "registryType": "nuget",
+      "identifier": "HistoricalBitcoinDataMcp",
+      "version": "0.1.1-beta",
+      "transport": {
+        "type": "stdio"
+      },
+      "packageArguments": [],
+      "environmentVariables": []
+    }
+  ],
+  "repository": {
+    "url": "https://github.com/alignedDev/HistoricalBitcoinDataMcp",
+    "source": "github"
+  }
+}
