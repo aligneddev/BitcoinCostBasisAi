@@ -4,14 +4,14 @@ VisualStudioVersion = 18.0.11104.47
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgentSample", "AgentSample\AgentSample.csproj", "{A8391A2C-A620-2C7A-85EF-288C935727DE}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "BitcoinHistoricalPriceMcp", "HistoricalPrice\BitcoinHistoricalPriceMcp.fsproj", "{3756733A-D479-8753-D4AF-F8DA893CEA1F}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5253180D-5E41-44A9-8A4E-EB02C90D872C}"
 	ProjectSection(SolutionItems) = preProject
 		HistoricalPrice\BitcoinHistoricalData.csv = HistoricalPrice\BitcoinHistoricalData.csv
 		HistoricalPrice\Dockerfile = HistoricalPrice\Dockerfile
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "BitcoinHistoricalPriceMcp", "HistoricalPrice\BitcoinHistoricalPriceMcp.fsproj", "{3756733A-D479-8753-D4AF-F8DA893CEA1F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
