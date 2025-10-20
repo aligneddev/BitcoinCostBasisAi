@@ -1,7 +1,7 @@
 ﻿# Bitcoin Cost Basis AI Agent System
 
 ## TODOs
-- [ ] Define F# types for transaction data
+- [ ] Define F# types for transaction data - include fees, wallet/exchange and details (for any notes)
 - [ ] Add average to the csv, add average to the F# type
 - [ ] data storage for transactions
 - [ ] F# compute cost basis (given new type `type costBasisDetails = dateBought: dateTime, amountBought:float, dateSold: dateTime, amountSold: float`), 
