@@ -13,16 +13,17 @@ Using SpecKit to design an AI Agent System to help with calculating Bitcoin cost
 ## Agents
 
 - Bitcoin Cost Basis Orchestrator Agent
+  - The main orchestrator agent that coordinates the workflow and the user will interact with.
   - takes in rows of data as csv in a described F# type (date bought, date sold, amount bought, amount sold)
   - verifies type is matched
   - use BitcoinHistoricalPriceMcp to get historical prices and line them up with the transactions
-  - calculate cost basis using FIFO method
+    - calculate cost basis using FIFO method via the MCP tool
   - calls the Bitcoin Tax Specialist Agent to get tax advice
-  - reports suggestions on changes 
+    - reports suggestions on changes 
   - asks the user if they want to run the Fill form with Playwright Agent to fill in the tax form
   - calls the Verify filled form Agent to check the filled in form is correct
   - outputs the results to a file or console
-  - asks the Bitcoin Tax Specialist Agent for things to do differently for the next year 
+  - asks the Bitcoin Tax Specialist Agent for things to do differently for the next year
 
 - Bitcoin Tax Specialist Agent
   - knows the Bitcoin tax rules and gives advice

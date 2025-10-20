@@ -19,5 +19,8 @@ let main argv =
         .WithTools<HistoricalBitcoinDataMcp>() |> ignore
 
     // Run the host (synchronously block until shutdown).
-    builder.Build().RunAsync().GetAwaiter().GetResult()
+    builder.Build().RunAsync() |> System.Threading.Tasks.Task.WaitAny |> ignore
     0
+
+
+    // https://gist.github.com/Thorium/46d683453517ca0567f035e78d758449 has a different approach
