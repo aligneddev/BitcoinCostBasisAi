@@ -1,7 +1,6 @@
 ﻿namespace BitcoinCostBasis
 
-// YouTube video that covers this sample: https://youtu.be/VInKZ45YKAM
-// https://github.com/rwjdk/MicrosoftAgentFrameworkSamples/blob/main/src/Workflow.Handoff/Program.cs
+// based on https://youtu.be/VInKZ45YKAM from https://github.com/rwjdk/MicrosoftAgentFrameworkSamples/blob/main/src/Workflow.Handoff/Program.cs
 open System
 open System.Threading.Tasks
 open Microsoft.Agents.AI.Workflows
@@ -13,31 +12,32 @@ module EntryProgram =
     
     let agentFactory = AgentFactory(configuration)
 
-    let intentAgent = agentFactory.CreateAzureOpenAiAgent "IntentAgent" "Determine what type of question was asked. Never answer yourself"
+    // DEMO
+    //let intentAgent = agentFactory.CreateAzureOpenAiAgent "IntentAgent" "Determine what type of question was asked. Never answer yourself"
 
-    let movieNerd = agentFactory.CreateAzureOpenAiAgent "MovieNerd" "You are a Movie Nerd"
+    //let movieNerd = agentFactory.CreateAzureOpenAiAgent "MovieNerd" "You are a Movie Nerd"
 
-    let musicNerd = agentFactory.CreateAzureOpenAiAgent "MusicNerd" "You are a Music Nerd"
+    //let musicNerd = agentFactory.CreateAzureOpenAiAgent "MusicNerd" "You are a Music Nerd"
 
-    let rec runLoop () =
-        task {
-            let mutable continueLoop = true
-            while continueLoop do
-                let messages = ResizeArray<ChatMessage>()
-                let workflow =
-                    AgentWorkflowBuilder.CreateHandoffBuilderWith(intentAgent)
-                        .WithHandoffs(intentAgent, [| movieNerd; musicNerd |])
-                        .WithHandoffs([| movieNerd; musicNerd |], intentAgent)
-                        .Build()
-                Console.Write("> ")
-                let userInput = Console.ReadLine()
-                if not (isNull userInput) then
-                    messages.Add(ChatMessage(ChatRole.User, userInput))
-                    let! results = RunWorkflowAsync workflow messages
-                    messages.AddRange(results)
-                else
-                    continueLoop <- false
-        }
+    //let rec runLoop () =
+    //    task {
+    //        let mutable continueLoop = true
+    //        while continueLoop do
+    //            let messages = ResizeArray<ChatMessage>()
+    //            let workflow =
+    //                AgentWorkflowBuilder.CreateHandoffBuilderWith(intentAgent)
+    //                    .WithHandoffs(intentAgent, [| movieNerd; musicNerd |])
+    //                    .WithHandoffs([| movieNerd; musicNerd |], intentAgent)
+    //                    .Build()
+    //            Console.Write("> ")
+    //            let userInput = Console.ReadLine()
+    //            if not (isNull userInput) then
+    //                messages.Add(ChatMessage(ChatRole.User, userInput))
+    //                let! results = RunWorkflowAsync workflow messages
+    //                messages.AddRange(results)
+    //            else
+    //                continueLoop <- false
+    //    }
     and RunWorkflowAsync (workflow: Workflow) (messages: ResizeArray<ChatMessage>) : Task<ResizeArray<ChatMessage>> =
         task {
             let mutable lastExecutorId : string = null
