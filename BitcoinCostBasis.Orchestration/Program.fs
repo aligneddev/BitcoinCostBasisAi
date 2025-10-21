@@ -8,7 +8,7 @@ open Microsoft.Agents.AI.Workflows
 open Microsoft.Extensions.AI
 open Entry
 
-module Entry =
+module EntryProgram =
     let configuration = { AzureOpenAiEndpoint = "https://kl-demo-hub-resource.openai.azure.com/"; AzureOpenAiKey = "REPLACE_ME"; ModelDeploymentName = "gpt-4.1-mini" }
     
     let agentFactory = AgentFactory(configuration)
@@ -41,28 +41,30 @@ module Entry =
     and RunWorkflowAsync (workflow: Workflow) (messages: ResizeArray<ChatMessage>) : Task<ResizeArray<ChatMessage>> =
         task {
             let mutable lastExecutorId : string = null
-            let! run = InProcessExecution.StreamAsync(workflow, messages) |> Async.AwaitTask
-            do! run.TrySendMessageAsync(TurnToken(emitEvents = true)) |> Async.AwaitTask
+            let! run = InProcessExecution.StreamAsync(workflow, messages)
+            // Discard bool result properly
+            let! _ = run.TrySendMessageAsync(TurnToken(emitEvents = true))
             let results = ResizeArray<ChatMessage>()
             let mutable outputReceived = false
             let stream = run.WatchStreamAsync().GetAsyncEnumerator()
             while not outputReceived do
-                let! hasNext = stream.MoveNextAsync() |> Async.AwaitTask
+                let! hasNext = stream.MoveNextAsync()
                 if hasNext then
-                    match stream.Current with
+                    let current = stream.Current
+                    match current with
                     | :? AgentRunUpdateEvent as e ->
                         if e.ExecutorId <> lastExecutorId then
                             lastExecutorId <- e.ExecutorId
                             Console.WriteLine()
-                            Utils.WriteLineSuccess(if String.IsNullOrEmpty(e.Update.AuthorName) then e.ExecutorId else e.Update.AuthorName)
+                            Console.WriteLine(if String.IsNullOrEmpty(e.Update.AuthorName) then e.ExecutorId else e.Update.AuthorName)
                         Console.Write(e.Update.Text)
                         match e.Update.Contents |> Seq.tryPick (fun c -> match c with :? FunctionCallContent as call -> Some call | _ -> None) with
                         | Some call ->
                             Console.WriteLine()
-                            Utils.WriteLineInformation(sprintf "Call '%s' with arguments: %s]" call.Name (JsonSerializer.Serialize(call.Arguments)))
+                            Console.WriteLine(sprintf "Call '%s' with arguments: %s]" call.Name (System.Text.Json.JsonSerializer.Serialize(call.Arguments)))
                         | None -> ()
                     | :? WorkflowOutputEvent as output ->
-                        Utils.Separator()
+                        Console.WriteLine("\n--- Workflow Output ---")
                         let outputMessages = output.As<ResizeArray<ChatMessage>>()
                         if not (isNull outputMessages) then
                             results.AddRange(outputMessages)
