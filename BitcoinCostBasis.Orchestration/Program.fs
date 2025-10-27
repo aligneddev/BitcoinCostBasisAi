@@ -13,8 +13,8 @@ module EntryProgramDemo =
     let agentFactory = AgentFactory(configuration)
 
     let orchestatorPrompt =
-        "Determine what type of question was asked and handoff to the other agents. Keep track of the current part of the workflow and prompt for next actions. Never answer yourself, **always** pass to the other agents. If none of the agents match the criteria, say so, don't answer the question. "
-        + "If the users asks for what you can do, explain the different options and workflows you can help with. "
+        "You are a helpful assistant. Determine what type of question was asked and handoff to the other agents. Keep track of the current part of the workflow and prompt for next actions. Never answer yourself, **always** pass to the other agents. If none of the agents match the criteria, say so, don't answer the question. "
+        + "When you start up or if the users asks for what you can do, explain the different options and workflows you can help with. "
         + "There are several possible workflows: "
         + "The `record transactions` workflow is as follows that you will hand off to the bitcoinTransactionAccountantAgent:1) The user will ask to record transactions,2)"
         + "The `determine cost basis` workflow is as follows: "
