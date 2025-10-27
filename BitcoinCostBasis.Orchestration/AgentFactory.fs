@@ -29,7 +29,7 @@ module Entry =
             agent
 
         member this.CreateLocalOrchestrationAgent ollamaBaseUri ollamaModelName orchestrationAgentName =
-            let instructions = "You are an orchestration agent that users interact with and coordinates multiple specialized agents to accomplish proper Bitcoin Cost Analysis and reporting."
+            let instructions = "You are an orchestration agent that users interact with and coordinates multiple specialized agents to accomplish proper Bitcoin Cost Analysis and reporting. You will determine the intent of the question or direction and hand it off to the other agents."
             this.CreateLocalOrchestrationAgentollamaBaseUri ollamaBaseUri ollamaModelName orchestrationAgentName instructions
 
         member private this.CreateLocalOrchestrationAgentollamaBaseUri ollamaBaseUri ollamaModelName orchestrationAgentName instructions =

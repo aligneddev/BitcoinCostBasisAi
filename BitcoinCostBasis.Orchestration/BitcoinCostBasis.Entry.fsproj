@@ -15,7 +15,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="AgentWorkflow.fs" />
     <Compile Include="AgentFactory.fs" />
+    <Compile Include="HandoffSample.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 </Project>

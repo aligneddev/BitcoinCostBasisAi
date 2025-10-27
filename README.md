@@ -1,14 +1,26 @@
 # Bitcoin Cost Basis AI Agent System
 
-Using SpecKit to design an AI Agent System to help with calculating Bitcoin cost basis for tax reporting.
+
+Goals:
+- Learning Microsoft Agent Framework  
+- Use F#
+- Share what I learned with others
+- Have the Agent as the interface for the user
+- Create a system to help with calculating Bitcoin cost basis for tax reporting.
+- Make tax reporting easier
 
 ## TODOs
 - [ ] Define F# types for transaction data - include fees, wallet/exchange (distinct wallet IDs in the DB for each venue/account), Tx hash (on‑chain), Type (purchased, transfer, traded, mining, staking, airdrop, fork, wage/comp, gift) and details (for any notes)
 - [ ] Add average to the csv, add average to the F# type
-- [ ] data storage for transactions
+- [ ] data storage for transactions (container?, local db? how to persist data?)
+    - how would this scale with more users in the future?
 - [ ] F# compute cost basis (given new type `type costBasisDetails = dateBought: dateTime, amountBought:float, dateSold: dateTime, amountSold: float`), 
   - [ ] add method to MCP
 - [ ] Buy and sell buckets for FIFO (storage, matching, reporting)
+- [ ] Can the MCP be an API and an MCP tool?
+    - [ ] reorganize notes below
+- [ ] Rename BitcoinHistoricalPriceMcp to BitcoinCostBasisToolsMcp
+- [ ] 
 
 ## Agents
 
@@ -38,7 +50,6 @@ Using SpecKit to design an AI Agent System to help with calculating Bitcoin cost
     - Usually the sells are only a small portion of the buys, but others times the sell is larger than the first buy, so I need to take the next buy(s) until the sell is fully matched.
   - How can we import data from my custom CSV?
     - Someday we could import from an exchange API.
-
     
 - Fill form with Playwright Agent
   - structured input - JSON
@@ -55,6 +66,7 @@ Using SpecKit to design an AI Agent System to help with calculating Bitcoin cost
 ### Other Miscellaneous Agents
 
 Maybe I could make this a larger web of agents...
+
 - Bitcoin Analyzer
   - how much have I increased in Sats/USD?
   - What if I sold now?
@@ -65,10 +77,29 @@ Maybe I could make this a larger web of agents...
   - it doesn't add much value to Cost basis and taxes, but maybe it can add some commentary
   - complain that there shouldn't be taxes on Bitcoin transactions
 - Reporting Agent
-  -  Reporting workflow (year‑end)
+  - Reporting workflow (year‑end)
   - Generate Form 8949 detail (short‑ vs long‑term sections) and Schedule D totals. [irs.gov]
   - Store 1099‑DA imports and reconcile variances (e.g., fees, basis, proceeds timing). Brokers must report gross proceeds for 2025+ transactions and basis starting 2026 for certain assets—expect mismatches i- your method differs; track adjustments. [irs.gov]
-    
+  - What should be deterministic code vs agent LLM?
+
+- User Advisory / Explanation Agent
+  - A layer for translating deterministic outputs into user‑friendly narrative.
+ 
+## Deterministic Code & MCP Tool
+
+- Bitcoin Historical Price MCP Tool
+  - Given a date, return the historical price of Bitcoin in USD on that date.
+  - Use a public API or historical data source.
+  - This will be used by the Orchestrator Agent to get prices for cost basis calculation.
+  - Could be split into more MCP tools as needed
+  - Transaction data model + immutable storage (parse/validate CSV, wallet/exchange IDs, fees, Tx hash, type enums)
+  - FIFO cost basis engine (matching buys to sells, partial bucket consumption, long/ vs short‑term holding period, gift carryover basis logic)
+  - Bitcoin Analyzer metrics (portfolio value over time, unrealized gain/loss, DCA averages, what‑if sell)
+  - CSV import & normalization (schema versioning, idempotent ingestion)
+  - Validation/verification of filled tax form rows (rule checks: dates, proceeds vs basis math, holding period classification)
+  - Form fill executor (Playwright automation steps – deterministic sequence with confirmations)
+  - Gift and transfer handlers (rules: no gain on gift, carryover basis, non-taxable internal transfers)
+  - Data export (JSON, CSV, audit trail snapshots)
 
 ## Cost Basis Manual Workflow
 
@@ -125,12 +156,18 @@ Choose your safe harbor:
 Specific Unit Allocation (map legacy unused basis to the actual units/wallets you hold on 1/1/2025), or
 Global Allocation (apply a consistent rule across all holdings, e.g., earliest buys → Wallet A, later → Wallet B).
 
-
 Record the allocation in your database table above with supporting reports. Once done, it’s irrevocable.
 
 
 ## Copilot getting started suggestions
 make suggestions for a "microsoft agent framework" implementation from this document. not semantic kernel
+
+### analyze my readme and tell me which of these agents should be deterministic code and MCP tools
+
+Rationale:
+- Anything requiring strict reproducibility, audit trails, tax math or regulatory compliance → deterministic F# + MCP.
+- Narrative, advisory, strategic suggestions → LLM agents.
+- Automation needing side effects (web form filling) but with predictable steps → deterministic tool callable by an agent.
 
 ## SpecKit
 ### Constitution
