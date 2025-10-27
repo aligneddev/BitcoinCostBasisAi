@@ -2,12 +2,9 @@
 
 // based on https://youtu.be/VInKZ45YKAM from https://github.com/rwjdk/MicrosoftAgentFrameworkSamples/blob/main/src/Workflow.Handoff/Program.cs
 open Microsoft.Agents.AI.Workflows
-open System
-open System.Threading.Tasks
-open BitcoinCostBasis.Orchestration.AgentWorkflow
 open Entry
 
-module EntryProgramDemo =
+module EntryProgramDemo_Sample =
     
     let configuration = { AzureOpenAiEndpoint = "https://kl-demo-hub-resource.openai.azure.com/"; AzureOpenAiKey = "REPLACE_ME"; ModelDeploymentName = "gpt-4.1-mini" }
     let agentFactory = AgentFactory(configuration)

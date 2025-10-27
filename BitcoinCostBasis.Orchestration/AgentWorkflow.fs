@@ -1,6 +1,7 @@
 namespace BitcoinCostBasis.Orchestration
 
 open System
+open System.Threading
 open System.Threading.Tasks
 open Microsoft.Agents.AI.Workflows
 open Microsoft.Extensions.AI
@@ -8,29 +9,42 @@ open Microsoft.Extensions.AI
 // General-purpose agent workflow loop
 // based on https://youtu.be/VInKZ45YKAM from https://github.com/rwjdk/MicrosoftAgentFrameworkSamples/blob/main/src/Workflow.Handoff/Program.cs
 module AgentWorkflow =
-    let rec runLoop workflow () =
+    let rec runLoop (workflow: Workflow) (ct: CancellationToken) =
         task {
             let mutable continueLoop = true
-            while continueLoop do
+            while continueLoop && not ct.IsCancellationRequested do
                 let messages = ResizeArray<ChatMessage>()
                 Console.Write("> ")
-                let userInput = Console.ReadLine()
-                if not (isNull userInput) then
-                    messages.Add(ChatMessage(ChatRole.User, userInput))
-                    let! results = RunWorkflowAsync workflow messages
-                    messages.AddRange(results)
-                else
+
+                // Read line asynchronously and support cancellation by racing the read against a cancel token.
+                let readTask = Console.In.ReadLineAsync() :> Task<string>
+                let cancelTask = Task.Delay(Timeout.Infinite, ct)
+                let! finished = Task.WhenAny(readTask, cancelTask)
+                if finished = cancelTask then
+                    // Cancellation requested - break the loop
                     continueLoop <- false
+                else
+                    let userInput = readTask.Result
+                    if not (isNull userInput) then
+                        messages.Add(ChatMessage(ChatRole.User, userInput))
+                        let! results = RunWorkflowAsync workflow messages ct
+                        messages.AddRange(results)
+                    else
+                        continueLoop <- false
         }
-    and RunWorkflowAsync (workflow: Workflow) (messages: ResizeArray<ChatMessage>) : Task<ResizeArray<ChatMessage>> =
+    and RunWorkflowAsync (workflow: Workflow) (messages: ResizeArray<ChatMessage>) (ct: CancellationToken) : Task<ResizeArray<ChatMessage>> =
         task {
             let mutable lastExecutorId : string = null
+            // Use the default StreamAsync overload; propagate cancellation through local checks.
             let! run = InProcessExecution.StreamAsync(workflow, messages)
+
+            // Send initial turn token.
             let! _ = run.TrySendMessageAsync(TurnToken(emitEvents = true))
+
             let results = ResizeArray<ChatMessage>()
             let mutable outputReceived = false
             let stream = run.WatchStreamAsync().GetAsyncEnumerator()
-            while not outputReceived do
+            while not outputReceived && not ct.IsCancellationRequested do
                 let! hasNext = stream.MoveNextAsync()
                 if hasNext then
                     let current = stream.Current
