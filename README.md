@@ -22,7 +22,6 @@ Goals:
 - [ ] Rename BitcoinHistoricalPriceMcp to BitcoinCostBasisToolsMcp
 - [ ] Add Aspire to Entry
 - [ ] Make an Api version of Entry with a 402 payment requirement
-- [ ] add devcontainer
 - [ ] add unit tests for deterministic code
 
 ## Agents

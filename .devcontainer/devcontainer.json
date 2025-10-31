@@ -1,0 +1,24 @@
+{
+ "name": "Bitcoin Cost Basis AI Dev",
+ "build": {
+ "dockerfile": "Dockerfile"
+ },
+ "features": {
+ "ghcr.io/devcontainers/features/dotnet:2": {
+ "version": "10.0"
+ },
+ "ghcr.io/devcontainers/features/git:1": {},
+ "ghcr.io/devcontainers/features/powershell:1": {}
+ },
+ "remoteUser": "vscode",
+ "customizations": {
+ "vscode": {
+ "extensions": [
+ "Ionide.Ionide-fsharp",
+ "ms-dotnettools.csharp",
+ "ms-azuretools.vscode-docker"
+ ]
+ }
+ },
+ "postCreateCommand": "dotnet restore"
+}
