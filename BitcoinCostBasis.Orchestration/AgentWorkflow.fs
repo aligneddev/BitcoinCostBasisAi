@@ -19,17 +19,19 @@ module AgentWorkflow =
                 if root.ValueKind <> JsonValueKind.Object then None
                 else
                     let tryGetString (name: string) =
-                        if root.TryGetProperty(name, &_) then
-                            match root.GetProperty(name).ValueKind with
-                            | JsonValueKind.String -> Some(root.GetProperty(name).GetString())
+                        let mutable prop = Unchecked.defaultof<JsonElement>
+                        if root.TryGetProperty(name, &prop) then
+                            match prop.ValueKind with
+                            | JsonValueKind.String -> Some(prop.GetString())
                             | _ -> None
                         else None
 
                     let tryGetNumber (name: string) =
-                        if root.TryGetProperty(name, &_) then
-                            match root.GetProperty(name).ValueKind with
+                        let mutable prop = Unchecked.defaultof<JsonElement>
+                        if root.TryGetProperty(name, &prop) then
+                            match prop.ValueKind with
                             | JsonValueKind.Number ->
-                                match root.GetProperty(name).TryGetDouble() with
+                                match prop.TryGetDouble() with
                                 | true, v -> Some v
                                 | _ -> None
                             | _ -> None
