@@ -16,7 +16,9 @@ let main argv =
     builder.Services
         .AddMcpServer()
         .WithStdioServerTransport()
-        .WithTools<HistoricalBitcoinDataMcp>() |> ignore
+        .WithTools<HistoricalBitcoinDataMcp>() 
+        //.WithToolsFromAssembly();
+        |> ignore
 
     // Run the host (synchronously block until shutdown).
     builder.Build().RunAsync() |> System.Threading.Tasks.Task.WaitAny |> ignore

@@ -45,11 +45,11 @@ module EntryProgramDemo =
             agentFactory.CreateAzureOpenAiAgentWithTools "IntentAgent" "The Intent/Orchestrator Agent" orchestatorPrompt tools
 
         let bitcoinStatisticalAgent =
-            agentFactory.CreateAzureOpenAiAgent
+            agentFactory.CreateAzureOpenAiAgentWithTools
                 "BitcoinStatisticalAndHistoryAnalystAgent"
                 "A Bitcoin Statistical and History Analyst Agent"
                 "You are a Bitcoin specialist and statistics export. You analyze the historical Bitcoin prices from the HistoricalBitcoinDataMcp tool and answer questions relating to historical Bitcoin prices, trends and stats."
-
+                tools
         let bitcoinTaxSpecialistAgent =
             agentFactory.CreateAzureOpenAiAgent
                 "BitcoinTaxSpecialistAgent"

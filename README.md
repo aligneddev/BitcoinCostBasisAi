@@ -26,20 +26,6 @@ Goals:
 - [ ] Persist history during session
 - [ ] Persist history after session
 
-## Testing
-
-- Based on the historical prices from Jan 2023 to today, On average, what is the best day of the week to buy bitcoin?
-    - didn't complete
-    - IntentAgent
-
-        Call 'handoff_to_1' with arguments: {"reasonForHandoff":"User wants analysis on the best day of the week to buy bitcoin based on historical prices from Jan 2023 to today."}]
-
-        BitcoinStatisticalAndHistoryAnalystAgent
-        To determine the best day of the week to buy Bitcoin based on historical prices from January 2023 to today, I will analyze the average closing prices of Bitcoin for each day of the week over this period. This will help identify which day typically had the lowest average closing price, suggesting the best day to buy.
-
-        Let me fetch and analyze the data for you.
-      I need to check the historical Bitcoin closing prices for each day of the week from January 2023 to today. Let me gather the data and calculate the average closing price for each weekday.
-
 ## Agents
 
 - Bitcoin Cost Basis Orchestrator Agent
@@ -193,4 +179,39 @@ Rationale:
 ### Constitution
 - The Bitcoin Cost Basis AI Agent System exists to help users accurately calculate their Bitcoin cost basis for tax reporting purposes, leveraging historical price data and adhering to relevant tax regulations.
 -  Create principles focused on code quality, testing standards, user experience consistency, and performance requirements following Clean Architecture, Functional Programming and TDD principles.
-- Using  F#, .Net 10, Microsoft Agent Framework and Podman containerization will be used to create agents and F# deterministic code.
+- Using F#, .Net 10, Microsoft Agent Framework and Podman containerization will be used to create agents and F# deterministic code.
+
+
+## Testing
+
+- Based on the historical prices from Jan 2023 to today, On average, what is the best day of the week to buy bitcoin?
+    - didn't complete
+    - IntentAgent
+
+        Call 'handoff_to_1' with arguments: {"reasonForHandoff":"User wants analysis on the best day of the week to buy bitcoin based on historical prices from Jan 2023 to today."}]
+
+        BitcoinStatisticalAndHistoryAnalystAgent
+        To determine the best day of the week to buy Bitcoin based on historical prices from January 2023 to today, I will analyze the average closing prices of Bitcoin for each day of the week over this period. This will help identify which day typically had the lowest average closing price, suggesting the best day to buy.
+
+        Let me fetch and analyze the data for you.
+      I need to check the historical Bitcoin closing prices for each day of the week from January 2023 to today. Let me gather the data and calculate the average closing price for each weekday.
+
+    - After this attempt, I gave it the MCP tool
+    -   BitcoinStatisticalAndHistoryAnalystAgent
+
+        Call 'read_historical_data_for_date_range' with arguments: {"startDate":"2023-01-01T00:00:00Z","endDate":"2024-06-21T00:00:00Z"}]
+        I have the historical Bitcoin price data from January 2023 to today. I will analyze the average prices for each day of the week to determine which day on average is the best day to buy Bitcoin (i.e., the day with the lowest average closing price). Let me perform this analysis.
+        After analyzing the historical Bitcoin prices from January 2023 to today, here is the average closing price of Bitcoin for each day of the week:
+
+        - Monday: (calculated average price)
+        - Tuesday: (calculated average price)
+        - Wednesday: (calculated average price)
+        - Thursday: (calculated average price)
+        - Friday: (calculated average price)
+        - Saturday: (calculated average price)
+        - Sunday: (calculated average price)
+
+        Based on these averages, the best day to buy Bitcoin on average (the day with the lowest average closing price) is: [Day of the Week].
+
+        Please hold on while I calculate the exact averages and finalize the best day for buying Bitcoin.
+        --- Workflow Output ---
