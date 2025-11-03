@@ -44,7 +44,13 @@ module EntryProgramDemo =
         let orchestratorAgent =
             agentFactory.CreateAzureOpenAiAgentWithTools "IntentAgent" "The Intent/Orchestrator Agent" orchestatorPrompt tools
 
-        let bitcoinTaxSpecialistAgent: AIAgent =
+        let bitcoinStatisticalAgent =
+            agentFactory.CreateAzureOpenAiAgent
+                "BitcoinStatisticalAndHistoryAnalystAgent"
+                "A Bitcoin Statistical and History Analyst Agent"
+                "You are a Bitcoin specialist and statistics export. You analyze the historical Bitcoin prices from the HistoricalBitcoinDataMcp tool and answer questions relating to historical Bitcoin prices, trends and stats."
+
+        let bitcoinTaxSpecialistAgent =
             agentFactory.CreateAzureOpenAiAgent
                 "BitcoinTaxSpecialistAgent"
                 "A Bitcoin Tax Specialist Agent"
@@ -70,11 +76,13 @@ module EntryProgramDemo =
 
         let x: (AIAgent seq) = [ bitcoinTaxSpecialistAgent ]
         AgentWorkflowBuilder.CreateHandoffBuilderWith(orchestratorAgent)
-            .WithHandoffs(orchestratorAgent, [ bitcoinTaxSpecialistAgent 
+            .WithHandoffs(orchestratorAgent, [ bitcoinStatisticalAgent
+                                               bitcoinTaxSpecialistAgent 
                                                bitcoinTransactionAccountantAgent
                                                fillTaxFormAgent
                                                verifyFilledTaxFormAgent])
-            .WithHandoffs([ bitcoinTaxSpecialistAgent
+            .WithHandoffs([ bitcoinStatisticalAgent
+                            bitcoinTaxSpecialistAgent
                             bitcoinTransactionAccountantAgent
                             fillTaxFormAgent
                             verifyFilledTaxFormAgent ],
@@ -90,10 +98,8 @@ module EntryProgramDemo =
             Console.WriteLine("Cancellation requested, shutting down...")
             cts.Cancel()
         )
-        let workflow = build cts
+        // Pass a factory so each turn uses a new workflow instance.
+        let workflowFactory () = build cts
+        runLoop workflowFactory cts.Token |> Async.AwaitTask |> Async.RunSynchronously
 
-        // Call the function returned by runLoop to get a Task, then await it synchronously.
-        runLoop workflow cts.Token |> Async.AwaitTask |> Async.RunSynchronously
-
-        //.GetAwaiter().GetResult()
         0

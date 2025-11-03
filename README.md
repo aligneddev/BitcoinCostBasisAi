@@ -12,7 +12,7 @@ Goals:
 ## TODOs
 - [ ] Define F# types for transaction data - include fees, wallet/exchange (distinct wallet IDs in the DB for each venue/account), Tx hash (on‑chain), Type (purchased, transfer, traded, mining, staking, airdrop, fork, wage/comp, gift) and details (for any notes)
 - [ ] Add average to the csv, add average to the F# type
-- [ ] data storage for transactions (container?, local db? how to persist data?)
+- [ ] data storage for transactions recording (container?, local db? how to persist data?)
     - how would this scale with more users in the future?
 - [ ] F# compute cost basis (given new type `type costBasisDetails = dateBought: dateTime, amountBought:float, dateSold: dateTime, amountSold: float`), 
   - [ ] add method to MCP
@@ -23,6 +23,22 @@ Goals:
 - [ ] Add Aspire to Entry
 - [ ] Make an Api version of Entry with a 402 payment requirement
 - [ ] add unit tests for deterministic code
+- [ ] Persist history during session
+- [ ] Persist history after session
+
+## Testing
+
+- Based on the historical prices from Jan 2023 to today, On average, what is the best day of the week to buy bitcoin?
+    - didn't complete
+    - IntentAgent
+
+        Call 'handoff_to_1' with arguments: {"reasonForHandoff":"User wants analysis on the best day of the week to buy bitcoin based on historical prices from Jan 2023 to today."}]
+
+        BitcoinStatisticalAndHistoryAnalystAgent
+        To determine the best day of the week to buy Bitcoin based on historical prices from January 2023 to today, I will analyze the average closing prices of Bitcoin for each day of the week over this period. This will help identify which day typically had the lowest average closing price, suggesting the best day to buy.
+
+        Let me fetch and analyze the data for you.
+      I need to check the historical Bitcoin closing prices for each day of the week from January 2023 to today. Let me gather the data and calculate the average closing price for each weekday.
 
 ## Agents
 
@@ -38,6 +54,8 @@ Goals:
   - calls the Verify filled form Agent to check the filled in form is correct
   - outputs the results to a file or console
   - asks the Bitcoin Tax Specialist Agent for things to do differently for the next year
+
+- Bitcoin Statistical And History Analyst Agent
 
 - Bitcoin Tax Specialist Agent
   - knows the Bitcoin tax rules and gives advice

@@ -48,7 +48,8 @@ module AgentWorkflow =
             with
             | _ -> None
 
-    let rec runLoop (workflow: Workflow) (ct: CancellationToken) =
+    // Modified: runLoop now takes a workflow factory to create a fresh workflow per turn
+    let rec runLoop (workflowFactory: unit -> Workflow) (ct: CancellationToken) =
         task {
             let mutable continueLoop = true
             while continueLoop && not ct.IsCancellationRequested do
@@ -65,6 +66,8 @@ module AgentWorkflow =
                 else
                     let userInput = readTask.Result
                     if not (isNull userInput) then
+                        // Create a new workflow instance per user turn to avoid ownership conflicts.
+                        let workflow = workflowFactory()
                         messages.Add(ChatMessage(ChatRole.User, userInput))
                         let! results = RunWorkflowAsync workflow messages ct
                         messages.AddRange(results)
@@ -74,8 +77,8 @@ module AgentWorkflow =
     and RunWorkflowAsync (workflow: Workflow) (messages: ResizeArray<ChatMessage>) (ct: CancellationToken) : Task<ResizeArray<ChatMessage>> =
         task {
             let mutable lastExecutorId : string = null
-            // Use the default StreamAsync overload; propagate cancellation through local checks.
-            let! run = InProcessExecution.StreamAsync(workflow, messages)
+            // Use the default StreamAsync overload; propagate cancellation through local checks. Dispose runner when done.
+            use! run = InProcessExecution.StreamAsync(workflow, messages)
 
             // Send initial turn token.
             let! _ = run.TrySendMessageAsync(TurnToken(emitEvents = true))
