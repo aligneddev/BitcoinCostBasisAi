@@ -8,15 +8,16 @@
   <ItemGroup>
     <PackageReference Include="Azure.AI.OpenAI" Version="2.5.0-beta.1" />
     <PackageReference Include="Azure.Identity" Version="1.17.0" />
-    <PackageReference Include="Microsoft.Agents.AI.OpenAI" Version="1.0.0-preview.251016.1" />
-    <PackageReference Include="Microsoft.Agents.AI.Workflows" Version="1.0.0-preview.251016.1" />
-    <PackageReference Include="Microsoft.Extensions.AI" Version="9.10.0" />
+    <PackageReference Include="Microsoft.Agents.AI.OpenAI" Version="1.0.0-preview.251028.1" />
+    <PackageReference Include="Microsoft.Agents.AI.Workflows" Version="1.0.0-preview.251028.1" />
+    <PackageReference Include="Microsoft.Extensions.AI" Version="9.10.2" />
+    <PackageReference Include="ModelContextProtocol" Version="0.4.0-preview.3" />
     <PackageReference Include="OllamaSharp" Version="5.4.8" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="AgentWorkflow.fs" />
     <Compile Include="AgentFactory.fs" />
+    <Compile Include="AgentWorkflow.fs" />
     <Compile Include="HandoffSample.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

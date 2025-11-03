@@ -6,3 +6,19 @@ If a question includes a Microsoft product, service, or technology, you should l
 
 You have access to the MCP tools:
 - BitcoinHistoricalPriceMcp - use this to look up Historical Bitcoin prices
+
+
+# F#
+- Write idomatic F# Code
+- use async { } computation expressions or task { } for asynchronous workflows
+    - use 'let!' to bind results of async computations
+- use option types (Some, None) to represent optional values
+- use pattern matching for control flow
+- use records and discriminated unions for complex data structures
+- use pipelining (|>) and function composition (>>)
+- use modules to organize code
+- use type annotations for public functions
+- use the 'let' keyword to define values and functions
+- use 'match' expressions for branching logic
+- use 'List', 'Array', and 'Seq' modules for collection operations
+- use inferred types where possible

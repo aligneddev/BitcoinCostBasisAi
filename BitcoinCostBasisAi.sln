@@ -7,6 +7,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5253180D-5E41-44A9-8A4E-EB02C90D872C}"
 	ProjectSection(SolutionItems) = preProject
 		HistoricalPrice\BitcoinHistoricalData.csv = HistoricalPrice\BitcoinHistoricalData.csv
+		.github\copilot-instructions.md = .github\copilot-instructions.md
 		HistoricalPrice\Dockerfile = HistoricalPrice\Dockerfile
 		README.md = README.md
 	EndProjectSection
