@@ -83,12 +83,15 @@ module AgentWorkflow =
             // Send initial turn token.
             let! _ = run.TrySendMessageAsync(TurnToken(emitEvents = true))
 
-            let results = ResizeArray<ChatMessage>()
-            let mutable outputReceived = false
+            // Capture final output messages (may be emitted multiple times as workflow progresses)
+            let mutable finalOutput : ResizeArray<ChatMessage> = ResizeArray()
             let stream = run.WatchStreamAsync().GetAsyncEnumerator()
-            while not outputReceived && not ct.IsCancellationRequested do
+            let mutable running = true
+            while running && not ct.IsCancellationRequested do
                 let! hasNext = stream.MoveNextAsync()
-                if hasNext then
+                if not hasNext then
+                    running <- false
+                else
                     let current = stream.Current
                     match current with
                     | :? AgentRunUpdateEvent as e ->
@@ -128,10 +131,8 @@ module AgentWorkflow =
                                     // If the message contains braces, warn the user that routing JSON was malformed.
                                     if text.Contains("{") && text.Contains("}") then
                                         Console.WriteLine("[Routing validation] Warning: detected JSON-like output but it did not match required schema {\"agent\":string,\"confidence\":number,\"reason\":string}")
-                            results.AddRange(outputMessages)
-                        outputReceived <- true
+                            // Overwrite finalOutput with latest set of messages (assume later outputs are more complete)
+                            finalOutput <- ResizeArray(outputMessages)
                     | _ -> ()
-                else
-                    outputReceived <- true
-            return results
+            return finalOutput
         }
