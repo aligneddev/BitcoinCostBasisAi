@@ -21,7 +21,7 @@ Goals:
     - [ ] reorganize notes below
 - [ ] Rename BitcoinHistoricalPriceMcp to BitcoinCostBasisToolsMcp
 - [ ] Add Aspire to Entry
-- [ ] Make an Api version of Entry with a 402 payment requirement
+- [ ] Make an Api version of Entry with a 402 payment requirement - host in Functions - https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-mcp
 - [ ] add unit tests for deterministic code
 - [ ] Persist history during session
 - [ ] Persist history after session
@@ -130,6 +130,8 @@ Then record the Bitcoin purchase as above date purchased, amount purchased, USD 
 
 After the sell is completed, then record the date sold, amount sold, price per Bitcoin in USD, fees, the wallet/exchange and notes (what was purchased or the dollars will be used for).
 
+[Watch Bitcoin University about spending Bitcoin](https://www.youtube.com/watch?v=MN2zzVAkw9A)
+
 ### Giving Bitcoin
 
 Gifts: giving is a disposition without gain (unless debt relief etc.), but donee takes carryover basis; receiving a gift is not income. (Track gifts separately in your schema; still needed for future gain calculations.) [General Pub. 551 principles for basis other than cost]
@@ -163,6 +165,10 @@ Specific Unit Allocation (map legacy unused basis to the actual units/wallets yo
 Global Allocation (apply a consistent rule across all holdings, e.g., earliest buys → Wallet A, later → Wallet B).
 
 Record the allocation in your database table above with supporting reports. Once done, it’s irrevocable.
+
+## Gifting
+
+https://cointelegraph.com/news/gifting-bitcoin-in-2025
 
 
 ## Copilot getting started suggestions
