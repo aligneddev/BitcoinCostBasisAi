@@ -85,7 +85,9 @@ module AgentWorkflow =
 
             // Capture final output messages (may be emitted multiple times as workflow progresses)
             let mutable finalOutput : ResizeArray<ChatMessage> = ResizeArray()
-            let stream = run.WatchStreamAsync().GetAsyncEnumerator()
+            
+            // Ensure the async enumerator is properly disposed to prevent memory leaks
+            use stream = run.WatchStreamAsync().GetAsyncEnumerator()
             let mutable running = true
             while running && not ct.IsCancellationRequested do
                 let! hasNext = stream.MoveNextAsync()
@@ -124,7 +126,7 @@ module AgentWorkflow =
                                 | Some(agent, confidence, reason) ->
                                     // Validate confidence range
                                     if Double.IsNaN(confidence) || confidence <0.0 || confidence >1.0 then
-                                        Console.WriteLine(sprintf "[Routing validation] Invalid confidence value: %f (expected0.0-1.0)" confidence)
+                                        Console.WriteLine(sprintf "[Routing validation] Invalid confidence value: %f (expected 0.0-1.0)" confidence)
                                     else
                                         Console.WriteLine(sprintf "[Routing validation] Valid routing decision -> agent: %s, confidence: %.2f, reason: %s" agent confidence (if String.IsNullOrEmpty(reason) then "(none)" else reason))
                                 | None ->
