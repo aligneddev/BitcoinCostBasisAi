@@ -57,7 +57,7 @@ module AgentWorkflow =
                 Console.Write("> ")
 
                 // Read line asynchronously and support cancellation by racing the read against a cancel token.
-                let readTask = Console.In.ReadLineAsync() :> Task<string>
+                let readTask = Console.In.ReadLineAsync()
                 let cancelTask = Task.Delay(Timeout.Infinite, ct)
                 let! finished = Task.WhenAny(readTask, cancelTask)
                 if finished = cancelTask then
