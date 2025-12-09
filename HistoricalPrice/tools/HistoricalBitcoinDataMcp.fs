@@ -5,6 +5,7 @@ open System
 
 module Mcp =
     [<Sealed>]
+    [<McpServerToolType>]
     type HistoricalBitcoinDataMcp() =
         [<McpServerTool>]
         [<Description("Reads historical Bitcoin price data from a CSV file.")>]
