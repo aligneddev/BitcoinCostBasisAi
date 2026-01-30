@@ -6,7 +6,7 @@ open Entry
 
 module EntryProgramDemo_Sample =
     
-    let configuration = { AzureOpenAiEndpoint = "https://kl-demo-hub-resource.openai.azure.com/"; AzureOpenAiKey = "REPLACE_ME"; ModelDeploymentName = "gpt-4.1-mini" }
+    let configuration = Configuration.loadConfiguration()
     let agentFactory = AgentFactory(configuration)
 
     // DEMO code from https://github.com/rwjdk/MicrosoftAgentFrameworkSamples/blob/main/src/Workflow.Handoff/Program.cs

@@ -96,7 +96,24 @@ module AgentWorkflow =
                     running <- false
                 else
                     let current = stream.Current
+                    Console.WriteLine(sprintf "WorkflowStep Type: %s" (stream.Current.GetType().ToString()))
                     match current with
+                    | :? ExecutorInvokedEvent as e ->
+                        // Executor (agent) is starting
+                        if e.ExecutorId <> lastExecutorId then
+                            lastExecutorId <- e.ExecutorId
+                            Console.WriteLine()
+                            Console.WriteLine(sprintf "[ExecutorStarting: %s]" e.ExecutorId)
+                    | :? ExecutorCompletedEvent as e ->
+                        // Executor (agent) is completed
+                        if e.ExecutorId <> lastExecutorId then
+                            lastExecutorId <- e.ExecutorId
+                            Console.WriteLine()
+                            Console.WriteLine(sprintf "[ExecutorCompleted: %s]" e.ExecutorId)
+                    | :? ExecutorFailedEvent as e ->
+                        // Executor (agent) is failed
+                        Console.WriteLine()
+                        Console.WriteLine(sprintf "[ExecutorFailed: %s], %s, %s" e.ExecutorId e.Data.Message e.Data.InnerException.Message)
                     | :? AgentResponseUpdateEvent as e ->
                         if e.ExecutorId <> lastExecutorId then
                             lastExecutorId <- e.ExecutorId

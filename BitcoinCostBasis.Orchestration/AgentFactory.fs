@@ -10,13 +10,30 @@ open Azure.Identity
 open Microsoft.Extensions.AI
 open ModelContextProtocol.Client
 open ModelContextProtocol.Protocol
+open Microsoft.Extensions.Configuration
 
 module Entry =
 
     type AzureConfiguration =
         { AzureOpenAiEndpoint: string
-          AzureOpenAiKey: string
           ModelDeploymentName: string}
+
+    module Configuration =
+        let loadConfiguration () =
+            let builder = ConfigurationBuilder()
+            builder.AddUserSecrets<AzureConfiguration>() |> ignore
+            let configuration = builder.Build()
+            
+            let endpoint = configuration.["AzureOpenAI:Endpoint"]
+            let model = configuration.["AzureOpenAI:ModelDeploymentName"]
+            
+            if String.IsNullOrWhiteSpace(endpoint) then
+                failwith "AzureOpenAI:Endpoint not found in user secrets. Please run: dotnet user-secrets set \"AzureOpenAI:Endpoint\" \"<your-endpoint>\""
+            if String.IsNullOrWhiteSpace(model) then
+                failwith "AzureOpenAI:ModelDeploymentName not found in user secrets. Please run: dotnet user-secrets set \"AzureOpenAI:ModelDeploymentName\" \"<your-model>\""
+            
+            { AzureOpenAiEndpoint = endpoint
+              ModelDeploymentName = model }
 
     type AgentFactory(configuration) =
         // System-level guardrails prepended to every agent's instructions.
@@ -78,7 +95,6 @@ module Entry =
 
         member private this.CreateAzureOpenAiClient() =
               new AzureOpenAIClient(new Uri(configuration.AzureOpenAiEndpoint), new AzureCliCredential())
-              //production will need a key new ApiKeyCredential(configuration.AzureOpenAiKey))
 
         member this.createPodmanMcpClient name imageName =
         

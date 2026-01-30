@@ -9,6 +9,50 @@ Goals:
 - Create a system to help with calculating Bitcoin cost basis for tax reporting.
 - Make tax reporting easier
 
+## Setup
+
+### Configure User Secrets
+
+This project uses .NET user secrets to store sensitive configuration like Azure OpenAI endpoint and model deployment name.
+
+1. Navigate to the `BitcoinCostBasis.Orchestration` directory:
+   ```bash
+   cd BitcoinCostBasis.Orchestration
+   ```
+
+2. Initialize user secrets (if not already done):
+   ```bash
+   dotnet user-secrets init
+   ```
+
+3. Set your Azure OpenAI endpoint:
+   ```bash
+   dotnet user-secrets set "AzureOpenAI:Endpoint" "https://your-resource-name.openai.azure.com/"
+   ```
+
+4. Set your model deployment name:
+   ```bash
+   dotnet user-secrets set "AzureOpenAI:ModelDeploymentName" "gpt-5-mini"
+   ```
+
+### Verify Configuration
+you can right click the project and click Manage User Secrets
+
+To view your current secrets:
+```bash
+dotnet user-secrets list
+```
+
+To remove a secret:
+```bash
+dotnet user-secrets remove "AzureOpenAI:Endpoint"
+```
+
+To clear all secrets:
+```bash
+dotnet user-secrets clear
+```
+
 ## TODOs
 - [ ] Define F# types for transaction data - include fees, wallet/exchange (distinct wallet IDs in the DB for each venue/account), Tx hash (on‑chain), Type (purchased, transfer, traded, mining, staking, airdrop, fork, wage/comp, gift) and details (for any notes)
 - [ ] Add average to the csv, add average to the F# type

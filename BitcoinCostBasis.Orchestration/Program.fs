@@ -10,10 +10,7 @@ open Microsoft.Extensions.AI
 open Microsoft.Agents.AI
 
 module EntryProgramDemo =
-    let configuration =
-        { AzureOpenAiEndpoint = "https://kl-demo-hub-resource.openai.azure.com/"
-          AzureOpenAiKey = "REPLACE_ME"
-          ModelDeploymentName = "gpt-4.1-mini" }
+    let configuration = Configuration.loadConfiguration()
 
     let build (cts: CancellationTokenSource) =
         let agentFactory = AgentFactory(configuration)
