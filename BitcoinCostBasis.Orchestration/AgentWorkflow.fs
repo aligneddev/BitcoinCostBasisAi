@@ -78,16 +78,10 @@ module AgentWorkflow =
     and RunWorkflowAsync (workflow: Workflow) (messages: ResizeArray<ChatMessage>) (ct: CancellationToken) : Task<ResizeArray<ChatMessage>> =
         task {
             let mutable lastExecutorId : string = null
-            // Use the default StreamAsync overload; propagate cancellation through local checks. Dispose runner when done.
             use! run = InProcessExecution.StreamAsync(workflow, messages)
-
-            // Send initial turn token.
             let! _ = run.TrySendMessageAsync(TurnToken(emitEvents = true))
-
-            // Capture final output messages (may be emitted multiple times as workflow progresses)
             let mutable finalOutput : ResizeArray<ChatMessage> = ResizeArray()
             
-            // Ensure the async enumerator is properly disposed to prevent memory leaks
             use stream = run.WatchStreamAsync().GetAsyncEnumerator()
             let mutable running = true
             while running && not ct.IsCancellationRequested do
@@ -96,75 +90,45 @@ module AgentWorkflow =
                     running <- false
                 else
                     let current = stream.Current
-                    Console.WriteLine(sprintf "WorkflowStep Type: %s" (stream.Current.GetType().ToString()))
+                    Console.WriteLine(sprintf "Debug: Current Step is %s" (current.GetType().ToString()))
                     match current with
                     | :? ExecutorInvokedEvent as e ->
-                        // Executor (agent) is starting
                         if e.ExecutorId <> lastExecutorId then
                             lastExecutorId <- e.ExecutorId
                             Console.WriteLine()
                             Console.WriteLine(sprintf "[ExecutorStarting: %s]" e.ExecutorId)
                     | :? ExecutorCompletedEvent as e ->
-                        // Executor (agent) is completed
                         if e.ExecutorId <> lastExecutorId then
                             lastExecutorId <- e.ExecutorId
                             Console.WriteLine()
                             Console.WriteLine(sprintf "[ExecutorCompleted: %s]" e.ExecutorId)
                     | :? ExecutorFailedEvent as e ->
-                        // Executor (agent) is failed
                         Console.WriteLine()
-                        Console.WriteLine(sprintf "[ExecutorFailed: %s], %s, %s" e.ExecutorId e.Data.Message e.Data.InnerException.Message)
+                        Console.WriteLine(sprintf "[ExecutorFailed: %s]" e.ExecutorId)
+                        if not (isNull e.Data) then
+                            Console.WriteLine(sprintf "  Error: %s" e.Data.Message)
                     | :? AgentResponseUpdateEvent as e ->
                         if e.ExecutorId <> lastExecutorId then
                             lastExecutorId <- e.ExecutorId
                             Console.WriteLine()
-                            match e.Data with
-                            | :? AgentResponseUpdate as update ->
-                                let authorName =
-                                    if String.IsNullOrEmpty(update.AuthorName) then
-                                        e.ExecutorId
-                                    else
-                                        update.AuthorName
-                                Console.WriteLine(authorName)
-                            | _ ->
-                                Console.WriteLine(e.ExecutorId)
-                        match e.Data with
-                        | :? AgentResponseUpdate as update ->
-                            Console.Write(update.Text)
-                            match update.Contents |> Seq.tryPick (fun c -> match c with :? FunctionCallContent as call -> Some call | _ -> None) with
-                            | Some call ->
-                                Console.WriteLine()
-                                Console.WriteLine(sprintf "Call '%s' with arguments: %s]" call.Name (System.Text.Json.JsonSerializer.Serialize(call.Arguments)))
-                            | None -> ()
-                        | _ -> ()
+                            Console.WriteLine(e.ExecutorId)
+                        // Print the streaming data directly
+                        Console.Write(e.Data.ToString())
+                    //| :? SuperStepStartedEvent as e ->
+                    //    Console.WriteLine(sprintf "[SuperStepStarted: Step=%d]" e.StepNumber)
+                    //| :? SuperStepCompletedEvent as e ->
+                    //    Console.WriteLine(sprintf "[SuperStepCompleted: Step=%d]" e.StepNumber)
                     | :? WorkflowOutputEvent as output ->
                         Console.WriteLine("\n--- Workflow Output ---")
-                        let outputMessages = output.As<ResizeArray<ChatMessage>>()
-                        if not (isNull outputMessages) then
-                            // Validate any routing JSON produced by orchestrator and print warnings if invalid.
+                        // Access Data directly and cast to the expected type
+                        match output.Data with
+                        | :? ResizeArray<ChatMessage> as outputMessages ->
                             for m in outputMessages do
-                                // Try to parse the message text as routing JSON.
-                                let text =
-                                    try
-                                        // ChatMessage exposes a ToString or Text member depending on SDK; attempt both safely.
-                                        let t =
-                                            try m.GetType().GetProperty("Text").GetValue(m) :?> string
-                                            with _ -> m.ToString()
-                                        t
-                                    with _ -> m.ToString()
-                                match tryParseRoutingJson(text) with
-                                | Some(agent, confidence, reason) ->
-                                    // Validate confidence range
-                                    if Double.IsNaN(confidence) || confidence <0.0 || confidence >1.0 then
-                                        Console.WriteLine(sprintf "[Routing validation] Invalid confidence value: %f (expected 0.0-1.0)" confidence)
-                                    else
-                                        Console.WriteLine(sprintf "[Routing validation] Valid routing decision -> agent: %s, confidence: %.2f, reason: %s" agent confidence (if String.IsNullOrEmpty(reason) then "(none)" else reason))
-                                | None ->
-                                    // If the message contains braces, warn the user that routing JSON was malformed.
-                                    if text.Contains("{") && text.Contains("}") then
-                                        Console.WriteLine("[Routing validation] Warning: detected JSON-like output but it did not match required schema {\"agent\":string,\"confidence\":number,\"reason\":string}")
-                            // Overwrite finalOutput with latest set of messages (assume later outputs are more complete)
-                            finalOutput <- ResizeArray(outputMessages)
-                    | _ -> ()
+                                Console.WriteLine(sprintf "Role: %s, Text: %s" (m.Role.ToString()) (m.Text))
+                            finalOutput <- outputMessages
+                        | _ ->
+                            Console.WriteLine(sprintf "Unexpected output type: %s" (output.Data.GetType().ToString()))
+                    | _ ->
+                        Console.WriteLine(sprintf "Unhandled event: %s" (current.GetType().ToString()))
             return finalOutput
         }
