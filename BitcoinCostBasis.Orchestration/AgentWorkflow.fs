@@ -4,6 +4,7 @@ open System
 open System.Threading
 open System.Threading.Tasks
 open System.Text.Json
+open Microsoft.Agents.AI
 open Microsoft.Agents.AI.Workflows
 open Microsoft.Extensions.AI
 
@@ -96,17 +97,29 @@ module AgentWorkflow =
                 else
                     let current = stream.Current
                     match current with
-                    | :? AgentRunUpdateEvent as e ->
+                    | :? AgentResponseUpdateEvent as e ->
                         if e.ExecutorId <> lastExecutorId then
                             lastExecutorId <- e.ExecutorId
                             Console.WriteLine()
-                            Console.WriteLine(if String.IsNullOrEmpty(e.Update.AuthorName) then e.ExecutorId else e.Update.AuthorName)
-                        Console.Write(e.Update.Text)
-                        match e.Update.Contents |> Seq.tryPick (fun c -> match c with :? FunctionCallContent as call -> Some call | _ -> None) with
-                        | Some call ->
-                            Console.WriteLine()
-                            Console.WriteLine(sprintf "Call '%s' with arguments: %s]" call.Name (System.Text.Json.JsonSerializer.Serialize(call.Arguments)))
-                        | None -> ()
+                            match e.Data with
+                            | :? AgentResponseUpdate as update ->
+                                let authorName =
+                                    if String.IsNullOrEmpty(update.AuthorName) then
+                                        e.ExecutorId
+                                    else
+                                        update.AuthorName
+                                Console.WriteLine(authorName)
+                            | _ ->
+                                Console.WriteLine(e.ExecutorId)
+                        match e.Data with
+                        | :? AgentResponseUpdate as update ->
+                            Console.Write(update.Text)
+                            match update.Contents |> Seq.tryPick (fun c -> match c with :? FunctionCallContent as call -> Some call | _ -> None) with
+                            | Some call ->
+                                Console.WriteLine()
+                                Console.WriteLine(sprintf "Call '%s' with arguments: %s]" call.Name (System.Text.Json.JsonSerializer.Serialize(call.Arguments)))
+                            | None -> ()
+                        | _ -> ()
                     | :? WorkflowOutputEvent as output ->
                         Console.WriteLine("\n--- Workflow Output ---")
                         let outputMessages = output.As<ResizeArray<ChatMessage>>()

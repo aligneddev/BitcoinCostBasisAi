@@ -30,14 +30,14 @@ module Entry =
             let client: AzureOpenAIClient = this.CreateAzureOpenAiClient()
             let chatClient: ChatClient = client.GetChatClient(configuration.ModelDeploymentName)
             let agentInstr = this.MergeInstructions(instructions)
-            let agent: AIAgent = chatClient.CreateAIAgent(agentInstr, agentName, description, tools)
+            let agent: AIAgent = chatClient.AsAIAgent(agentInstr, agentName, description, tools)
             agent
 
         member this.CreateAzureOpenAiAgent (agentName: string) (description: string) (instructions: string) =
             let client: AzureOpenAIClient = this.CreateAzureOpenAiClient()
             let chatClient: ChatClient = client.GetChatClient(configuration.ModelDeploymentName)
             let agentInstr = this.MergeInstructions instructions
-            let agent: AIAgent = chatClient.CreateAIAgent(agentInstr, agentName, description)
+            let agent: AIAgent = chatClient.AsAIAgent(agentInstr, agentName, description)
             agent
 
         ///// Create an agent using a specific deployment (useful to choose cheaper/stronger models per task).
@@ -62,7 +62,7 @@ module Entry =
             let client: AzureOpenAIClient = this.CreateAzureOpenAiClient()
             let chatClient: ChatClient = client.GetChatClient(configuration.ModelDeploymentName)
             let agentInstr = this.MergeInstructions(instructions)
-            let agent: AIAgent = chatClient.CreateAIAgent(agentInstr, orchestrationAgentName)
+            let agent: AIAgent = chatClient.AsAIAgent(agentInstr, orchestrationAgentName)
             agent
 
         member this.CreateLocalOrchestrationAgent ollamaBaseUri ollamaModelName orchestrationAgentName instructions =

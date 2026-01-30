@@ -25,6 +25,8 @@ Goals:
 - [ ] add unit tests for deterministic code
 - [ ] Persist history during session
 - [ ] Persist history after session
+- [ ] Enable DevUI: https://elbruno.com/2025/11/13/%F0%9F%9A%80-supercharging-net-apps-with-devui-and-the-new-microsoft-agent-framework/
+- Create a UI interface using F# Blazor with https://fsbolero.io/?
 
 ## Agents
 
@@ -34,6 +36,7 @@ Goals:
   - verifies type is matched
   - use BitcoinHistoricalPriceMcp to get historical prices and line them up with the transactions
     - calculate cost basis using FIFO method via the MCP tool
+
   - calls the Bitcoin Tax Specialist Agent to get tax advice
     - reports suggestions on changes 
   - asks the user if they want to run the Fill form with Playwright Agent to fill in the tax form
@@ -106,6 +109,10 @@ Maybe I could make this a larger web of agents...
   - Form fill executor (Playwright automation steps – deterministic sequence with confirmations)
   - Gift and transfer handlers (rules: no gain on gift, carryover basis, non-taxable internal transfers)
   - Data export (JSON, CSV, audit trail snapshots)
+
+I used https://www.investing.com/crypto/bitcoin/historical-data and downloaded the CSV for historical prices, then saved them in BitcoinHistoricalData.csv. (It needs a free login)
+
+Copilot cleanup script: ``
 
 ## Cost Basis Manual Workflow
 
@@ -189,6 +196,9 @@ Rationale:
 
 
 ## Testing
+
+Start the BitcoinCostBasis.Entry project
+
 
 - Based on the historical prices from Jan 2023 to today, On average, what is the best day of the week to buy bitcoin?
     - didn't complete

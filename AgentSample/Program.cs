@@ -7,24 +7,25 @@ using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
 using OllamaSharp;
 using OpenAI;
+using OpenAI.Chat;
 
-//await AzureAIChat();
+await AzureAIChat();
 
 static async Task AzureAIChat()
 {
-    var endpoint = "https://kl-demo-hub-resource.openai.azure.com/";
-    var deploymentName = "gpt-4.1-mini";
+    var openAiEndpoint = "https://kloga-mi9dtiso-eastus2.openai.azure.com/";
+    var deploymentName = "gpt-5-mini";
 
     const string JokerName = "Joker Dad";
     const string JokerInstructions = "You are good at telling jokes.";
 
-    var agent = new AzureOpenAIClient(new Uri(endpoint), new AzureCliCredential())
+    var agent = new AzureOpenAIClient(new Uri(openAiEndpoint), new AzureCliCredential())
         .GetChatClient(deploymentName)
-        .CreateAIAgent(JokerInstructions, JokerName);
+        .AsAIAgent(JokerInstructions, JokerName);
     await CallTheAgent(agent);
 }
 
-await LocalLlmChat();
+//await LocalLlmChat();
 
 static async Task LocalLlmChat()
 {
